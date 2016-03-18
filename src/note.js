@@ -7,12 +7,11 @@ var Note = React.createClass( {
 		this.setState({editing: true});
 	},
 	save: function() {
-		var val = this.refs.newText.getDOMNode().value;
-		alert("to do :" + val);
+		this.props.onChange(this.refs.newText.getDOMNode().value, this.props.index);
 		this.setState({editing: false});
 	},
 	remove: function(){
-		alert('no');
+		this.props.onRemove(this.props.index);
 	},
 	renderDisplay: function() {
 		return (<div className="note">
@@ -45,14 +44,50 @@ var Note = React.createClass( {
 var Board = React.createClass({
 	propTypes: {
 		count: function(props, propName){
-
+			if (typeof props[propName] !== "number") {
+				return new Error('problem');
+			}
+			if (typeof props[propName] > 50 ) {
+				return new Error('too many');
+			}
 		}
+	},
+	update: function(newText, i) {
+		var arr = this.state.notes;
+		arr[i] = newText;
+		this.setState({ notes: arr});
+	},
+	remove: function(i) {
+		var arr = this.state.notes;
+		arr.splice(i, 1);
+		this.setState({notes: arr}); 
+	},
+	eachNote: function(note, i) {
+		return (
+				<Note key={i}
+					index={i}
+					onChange={this.update}
+					onRemove={this.remove}
+				>{note}</Note>
+				);
+	},
+	getInitialState: function() {
+		return {
+			notes: [
+				'send application',
+				'call akassa',
+				'buy food'
+			]
+		};
 	},
 	render: function(){
 		return (
-			<div className="board"></div>
+			<div className="board">
+				{this.state.notes.map(this.eachNote)}
+			</div>
 		)
 	}
 });
 
-React.render(<Note> </Note>,document.getElementById("text"));
+React.render(<Board count = {51}> </Board>,document.getElementById("text"));
+
