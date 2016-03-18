@@ -52,6 +52,11 @@ var Board = React.createClass({
 			}
 		}
 	},
+	add: function(text) {
+		var arr = this.state.notes;
+		arr.push(text);
+		this.setState({notes: arr});
+	},
 	update: function(newText, i) {
 		var arr = this.state.notes;
 		arr[i] = newText;
@@ -73,17 +78,15 @@ var Board = React.createClass({
 	},
 	getInitialState: function() {
 		return {
-			notes: [
-				'send application',
-				'call akassa',
-				'buy food'
-			]
+			notes: []
 		};
 	},
 	render: function(){
 		return (
 			<div className="board">
 				{this.state.notes.map(this.eachNote)}
+				<button className="btn btn-lg btn-success glyphicon glyphicon-plus"
+				onClick={this.add.bind(null, "")}/>
 			</div>
 		)
 	}
